@@ -7,6 +7,8 @@ import (
 	"net/http"
 )
 
+// Render is the main type for this package. Create a variable of this type
+// and specify its fields, and you have access to the Show function.
 type Render struct {
 	TemplateDir string
 	Functions   template.FuncMap
@@ -19,8 +21,8 @@ type templateData struct {
 	Data map[string]any
 }
 
-// Render generates a page of html from our template files
-func (ren *Render) Render(w http.ResponseWriter, t string, td *templateData) {
+// Show generates a page of html from our template file(s).
+func (ren *Render) Show(w http.ResponseWriter, t string, td *templateData) {
 	// declare a variable to hold the ready to execute template.
 	var tmpl *template.Template
 
@@ -53,11 +55,9 @@ func (ren *Render) Render(w http.ResponseWriter, t string, td *templateData) {
 		log.Println("Error executing template:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
 }
 
 func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
-
 	templateSlice := append(ren.Partials, fmt.Sprintf("./%s/%s", ren.TemplateDir, t))
 
 	tmpl, err := template.New(t).Funcs(ren.Functions).ParseFiles(templateSlice...)

@@ -15,6 +15,7 @@ type Render struct {
 	UseCache    bool                          // if true, use the template cache, stored in TemplateMap.
 	TemplateMap map[string]*template.Template // our template cache.
 	Partials    []string                      // a list of partials; these are stored in TemplateDir.
+	Debug       bool                          // prints debugging info when true.
 }
 
 // Data is a struct to hold any data that is to be passed to a template.
@@ -31,7 +32,9 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) {
 	// map templateMap, stored in the receiver.
 	if ren.UseCache {
 		if templateFromMap, ok := ren.TemplateMap[t]; ok {
-			//log.Println("getting template from map")
+			if ren.Debug {
+				log.Println("Reading template", t, "from cache")
+			}
 			tmpl = templateFromMap
 		}
 	}
@@ -41,7 +44,6 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) {
 	if tmpl == nil {
 		newTemplate, err := ren.buildTemplateFromDisk(t)
 		if err != nil {
-			log.Println("Error building template:", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -55,14 +57,17 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) {
 
 	// execute the template
 	if err := tmpl.ExecuteTemplate(w, t, td); err != nil {
-		log.Println("Error executing template:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
 // buildTemplateFromDisk builds a template from disk.
 func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
-	templateSlice := append(ren.Partials, fmt.Sprintf("./%s/%s", ren.TemplateDir, t))
+	templateSlice := []string{}
+	for _, x := range ren.Partials {
+		templateSlice = append(templateSlice, fmt.Sprintf("%s/%s", ren.TemplateDir, x))
+	}
+	templateSlice = append(templateSlice, fmt.Sprintf("%s/%s", ren.TemplateDir, t))
 
 	tmpl, err := template.New(t).Funcs(ren.Functions).ParseFiles(templateSlice...)
 	if err != nil {
@@ -72,6 +77,10 @@ func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
 	// Add the template to the template map stored in our receiver.
 	// Note that this is ignored in development, but does not hurt anything.
 	ren.TemplateMap[t] = tmpl
+
+	if ren.Debug {
+		log.Println("Reading template", t, "from disk")
+	}
 
 	return tmpl, nil
 }

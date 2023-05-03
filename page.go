@@ -17,12 +17,13 @@ type Render struct {
 	Partials    []string
 }
 
-type templateData struct {
+// Data is a struct to hold any data that is to be passed to a template.
+type Data struct {
 	Data map[string]any
 }
 
 // Show generates a page of html from our template file(s).
-func (ren *Render) Show(w http.ResponseWriter, t string, td *templateData) {
+func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) {
 	// declare a variable to hold the ready to execute template.
 	var tmpl *template.Template
 
@@ -35,6 +36,8 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *templateData) {
 		}
 	}
 
+	// tmpl will be nil if we do not have a value in the map (our template cache). In this case,
+	// we build the template from disk.
 	if tmpl == nil {
 		newTemplate, err := ren.buildTemplateFromDisk(t)
 		if err != nil {
@@ -47,7 +50,7 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *templateData) {
 
 	// if we don't have template data, just use an empty struct.
 	if td == nil {
-		td = &templateData{}
+		td = &Data{}
 	}
 
 	// execute the template

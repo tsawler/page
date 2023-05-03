@@ -10,12 +10,12 @@ import (
 // Render is the main type for this package. Create a variable of this type
 // and specify its fields, and you have access to the Show function.
 type Render struct {
-	TemplateDir string                        // the directory where go templates are stored.
-	Functions   template.FuncMap              // a map of functions we want to pass to our templates.
-	UseCache    bool                          // if true, use the template cache, stored in TemplateMap.
-	TemplateMap map[string]*template.Template // our template cache.
-	Partials    []string                      // a list of partials; these are stored in TemplateDir.
-	Debug       bool                          // prints debugging info when true.
+	TemplateDir string                        // The directory where go templates are stored.
+	Functions   template.FuncMap              // A map of functions we want to pass to our templates.
+	UseCache    bool                          // If true, use the template cache, stored in TemplateMap.
+	TemplateMap map[string]*template.Template // Our template cache.
+	Partials    []string                      // A list of partials; these are assumed to be stored in TemplateDir.
+	Debug       bool                          // Prints debugging info when true.
 }
 
 // Data is a struct to hold any data that is to be passed to a template.

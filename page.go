@@ -10,11 +10,11 @@ import (
 // Render is the main type for this package. Create a variable of this type
 // and specify its fields, and you have access to the Show function.
 type Render struct {
-	TemplateDir string
-	Functions   template.FuncMap
-	UseCache    bool
-	TemplateMap map[string]*template.Template
-	Partials    []string
+	TemplateDir string                        // the directory where go templates are stored.
+	Functions   template.FuncMap              // a map of functions we want to pass to our templates.
+	UseCache    bool                          // if true, use the template cache, stored in TemplateMap.
+	TemplateMap map[string]*template.Template // our template cache.
+	Partials    []string                      // a list of partials; these are stored in TemplateDir.
 }
 
 // Data is a struct to hold any data that is to be passed to a template.
@@ -60,6 +60,7 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) {
 	}
 }
 
+// buildTemplateFromDisk builds a template from disk.
 func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
 	templateSlice := append(ren.Partials, fmt.Sprintf("./%s/%s", ren.TemplateDir, t))
 

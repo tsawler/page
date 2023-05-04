@@ -23,6 +23,18 @@ type Data struct {
 	Data map[string]any
 }
 
+// New returns a Render type populated with sensible defaults.
+func (ren *Render) New() *Render {
+	return &Render{
+		TemplateDir: "",
+		Functions:   template.FuncMap{},
+		UseCache:    true,
+		TemplateMap: make(map[string]*template.Template),
+		Partials:    []string{},
+		Debug:       false,
+	}
+}
+
 // Show generates a page of html from our template file(s).
 func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) {
 	// declare a variable to hold the ready to execute template.

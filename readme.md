@@ -9,7 +9,8 @@
 
 # page
 
-This is a simple package that makes rendering Go html templates as painless as possible. 
+This is a simple package that makes rendering Go html templates as painless as possible. It has no dependencies
+outside of the standard library.
 
 ## Installation
 Install it the usual way:

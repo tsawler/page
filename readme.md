@@ -1,3 +1,12 @@
+[![Version](https://img.shields.io/badge/goversion-1.20.x-blue.svg)](https://golang.org)
+<a href="https://golang.org"><img src="https://img.shields.io/badge/powered_by-Go-3362c2.svg?style=flat-square" alt="Built with GoLang"></a>
+[![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/tsawler/goblender/master/LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/tsawler/page)](https://goreportcard.com/report/github.com/tsawler/page)
+![Tests](https://github.com/tsawler/page/actions/workflows/tests.yml/badge.svg)
+<a href="https://pkg.go.dev/github.com/tsawler/page"><img src="https://img.shields.io/badge/godoc-reference-%23007d9c.svg"></a>
+[![Go Coverage](https://github.com/tsawler/page/wiki/coverage.svg)](https://raw.githack.com/wiki/tsawler/page/coverage.html)
+
+
 # page
 
 This is a simple package that makes rendering Go html templates as painless as possible. 

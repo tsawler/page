@@ -29,6 +29,42 @@ If you set UseCache to true, then every time a template is rendered it will be s
 which is of type `map[string]*template.Template`. This way, pre-parsed templates can be read very quickly from
 memory, rather than rebuilding them from disk on every request, which is an expensive operation.
 
+
+## Example
+
+Assuming that you have two Go templates named `base.layout.gohtml` and `home.page.gohtml` which look like this...
+
+```gotemplate
+{{define "base"}}
+    <!doctype html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+    </head>
+    <body>
+    {{block "content" .}}
+
+    {{end}}
+    </body>
+    </html>
+{{end}}
+```
+
+```gotemplate
+{{template "base" .}}
+
+{{define "content"}}
+    <h1>Hello, world!</h1>
+    <p>{{index .Data "payload"}}</p>
+{{end}}
+```
+
+... then you can use code like this:
+
 ```go
 package main
 

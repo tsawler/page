@@ -25,7 +25,7 @@ type Data struct {
 }
 
 // New returns a Render type populated with sensible defaults.
-func (ren *Render) New() *Render {
+func New() *Render {
 	return &Render{
 		TemplateDir: "",
 		Functions:   template.FuncMap{},
@@ -53,6 +53,7 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) error {
 	// execute the template
 	if err := tmpl.ExecuteTemplate(w, t, td); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return err
 	}
 	return nil
 }
@@ -64,6 +65,11 @@ func (ren *Render) String(w http.ResponseWriter, t string, td *Data) (string, er
 	tmpl, err := ren.buildTemplate(t)
 	if err != nil {
 		return "", err
+	}
+
+	// if we don't have template data, just use an empty struct.
+	if td == nil {
+		td = &Data{}
 	}
 
 	// Execute the template, storing the result in a bytes.Buffer variable.

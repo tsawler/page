@@ -9,7 +9,7 @@ import (
 )
 
 // Render is the main type for this package. Create a variable of this type
-// and specify its fields, and you have access to the Show function.
+// and specify its fields, and you have access to the Show and String functions.
 type Render struct {
 	TemplateDir string                        // The directory where go templates are stored.
 	Functions   template.FuncMap              // A map of functions we want to pass to our templates.

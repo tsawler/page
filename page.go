@@ -27,7 +27,7 @@ type Data struct {
 // New returns a Render type populated with sensible defaults.
 func New() *Render {
 	return &Render{
-		TemplateDir: "",
+		TemplateDir: "./templates",
 		Functions:   template.FuncMap{},
 		UseCache:    true,
 		TemplateMap: make(map[string]*template.Template),

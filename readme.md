@@ -106,7 +106,9 @@ func main() {
 		data["payload"] = "This is passed data."
 		out, err := render.String(w, "home.page.gohtml", &page.Data{Data: data})
 		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)
+			return
 		}
 		log.Println(out)
 		fmt.Fprint(w, "Check the console; you should see html")

@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
 )
 
 // Render is the main type for this package. Create a variable of this type
@@ -120,7 +121,9 @@ func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
 
 	// Read in the partials, if any.
 	for _, x := range ren.Partials {
-		templateSlice = append(templateSlice, fmt.Sprintf("%s/%s", ren.TemplateDir, x))
+		// We use filepath.Join to make this OS-agnostic.
+		path := filepath.Join(ren.TemplateDir, x)
+		templateSlice = append(templateSlice, path)
 	}
 
 	// Append the template we want to render to the slice.

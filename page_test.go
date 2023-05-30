@@ -1,7 +1,9 @@
 package page
 
 import (
+	"html/template"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -107,5 +109,29 @@ func TestRender_String(t *testing.T) {
 				t.Errorf("%s: no html returned", e.name)
 			}
 		}
+	}
+}
+
+func Foo() string {
+	return "bar"
+}
+
+func Test_withFuncMap(t *testing.T) {
+	p := New()
+	p.TemplateDir = "./testdata/templates"
+	p.Partials = []string{"base.layout.gohtml"}
+	fm := template.FuncMap{
+		"foo": Foo,
+	}
+	p.Functions = fm
+
+	rr := httptest.NewRecorder()
+	s, err := p.String(rr, "with_func.page.gohtml", nil)
+	if err != nil {
+		t.Error("error rendering string:", err)
+	}
+
+	if !strings.Contains(s, "bar") {
+		t.Error("did not find bar in rendered template:\n", s)
 	}
 }

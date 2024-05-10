@@ -60,7 +60,7 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) error {
 }
 
 // String renders a template and returns it as a string.
-func (ren *Render) String(w http.ResponseWriter, t string, td *Data) (string, error) {
+func (ren *Render) String(t string, td *Data) (string, error) {
 	// Call buildTemplate to get the template, either from the cache or by building it
 	// from disk.
 	tmpl, err := ren.buildTemplate(t)

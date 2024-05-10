@@ -81,13 +81,12 @@ func TestRender_String(t *testing.T) {
 	p.Partials = []string{"base.layout.gohtml"}
 
 	for _, e := range stringTests {
-		rr := httptest.NewRecorder()
 		data := make(map[string]any)
 		p.UseCache = e.useCache
 		data["payload"] = "This is passed data."
 
 		if e.useData {
-			s, err := p.String(rr, e.template, &Data{Data: data})
+			s, err := p.String(e.template, &Data{Data: data})
 			if err != nil && !e.errorExpected {
 				t.Errorf("%s: failed to render template: %v", e.name, err)
 			}
@@ -98,7 +97,7 @@ func TestRender_String(t *testing.T) {
 				t.Errorf("%s: no html returned", e.name)
 			}
 		} else {
-			s, err := p.String(rr, e.template, nil)
+			s, err := p.String(e.template, nil)
 			if err != nil && !e.errorExpected {
 				t.Errorf("%s: failed to render template: %v", e.name, err)
 			}
@@ -125,8 +124,7 @@ func Test_withFuncMap(t *testing.T) {
 	}
 	p.Functions = fm
 
-	rr := httptest.NewRecorder()
-	s, err := p.String(rr, "with_func.page.gohtml", nil)
+	s, err := p.String("with_func.page.gohtml", nil)
 	if err != nil {
 		t.Error("error rendering string:", err)
 	}

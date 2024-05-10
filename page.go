@@ -7,7 +7,10 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"sync"
 )
+
+var mapLock sync.Mutex
 
 // Render is the main type for this package. Create a variable of this type
 // and specify its fields, and you have access to the Show and String functions.
@@ -137,7 +140,9 @@ func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
 
 	// Add the template to the template map stored in our receiver.
 	// Note that this is ignored in development, but does not hurt anything.
+	mapLock.Lock()
 	ren.TemplateMap[t] = tmpl
+	mapLock.Unlock()
 
 	if ren.Debug {
 		log.Println("Reading template", t, "from disk")

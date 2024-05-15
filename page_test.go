@@ -7,6 +7,10 @@ import (
 	"testing"
 )
 
+type Data struct {
+	Data map[string]any
+}
+
 func Test_New(t *testing.T) {
 	page := New()
 	if page.Debug {
@@ -23,7 +27,7 @@ var showTests = []struct {
 }{
 	{name: "valid", template: "home.page.gohtml", useData: true, useCache: true, errorExpected: false},
 	{name: "valid from cache", template: "home.page.gohtml", useData: true, useCache: true, errorExpected: false},
-	{name: "valid: no data", template: "home.page.gohtml", useData: false, useCache: false, errorExpected: false},
+	{name: "valid: no data", template: "nodata.page.gohtml", useData: false, useCache: false, errorExpected: false},
 	{name: "invalid: no template", template: "x.page.gohtml", useData: false, errorExpected: true},
 	{name: "invalid: bad template", template: "bad.page.gohtml", useData: false, errorExpected: true},
 }
@@ -69,7 +73,7 @@ var stringTests = []struct {
 }{
 	{name: "valid", template: "home.page.gohtml", useData: true, useCache: true, errorExpected: false},
 	{name: "valid from cache", template: "home.page.gohtml", useData: true, useCache: true, errorExpected: false},
-	{name: "valid: no data", template: "home.page.gohtml", useData: false, useCache: false, errorExpected: false},
+	{name: "valid: no data", template: "nodata.page.gohtml", useData: false, useCache: false, errorExpected: false},
 	{name: "invalid: no template", template: "x.page.gohtml", useData: false, errorExpected: true},
 	{name: "invalid: bad template", template: "bad.page.gohtml", useData: false, errorExpected: true},
 }

@@ -79,6 +79,10 @@ import (
 
 const port = ":8080"
 
+type Data struct {
+	Data map[string]any
+}
+
 func main() {
 
 	render := page.Render{
@@ -93,7 +97,7 @@ func main() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		data := make(map[string]any)
 		data["payload"] = "This is passed data."
-		err := render.Show(w, "home.page.gohtml", &page.Data{Data: data})
+		err := render.Show(w, "home.page.gohtml", &Data{Data: data})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)
@@ -104,7 +108,7 @@ func main() {
 	http.HandleFunc("/string", func(w http.ResponseWriter, r *http.Request) {
 		data := make(map[string]any)
 		data["payload"] = "This is passed data."
-		out, err := render.String(w, "home.page.gohtml", &page.Data{Data: data})
+		out, err := render.String(w, "home.page.gohtml", &Data{Data: data})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)

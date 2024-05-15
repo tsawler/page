@@ -23,11 +23,6 @@ type Render struct {
 	Debug       bool                          // Prints debugging info when true.
 }
 
-// Data is a struct to hold any data that is to be passed to a template.
-type Data struct {
-	Data map[string]any
-}
-
 // New returns a Render type populated with sensible defaults.
 func New() *Render {
 	return &Render{
@@ -41,17 +36,12 @@ func New() *Render {
 }
 
 // Show generates a page of html from our template file(s).
-func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) error {
+func (ren *Render) Show(w http.ResponseWriter, t string, td any) error {
 	// Call buildTemplate to get the template, either from the cache or by building it
 	// from disk.
 	tmpl, err := ren.buildTemplate(t)
 	if err != nil {
 		return err
-	}
-
-	// if we don't have template data, just use an empty struct.
-	if td == nil {
-		td = &Data{}
 	}
 
 	// execute the template
@@ -63,17 +53,12 @@ func (ren *Render) Show(w http.ResponseWriter, t string, td *Data) error {
 }
 
 // String renders a template and returns it as a string.
-func (ren *Render) String(t string, td *Data) (string, error) {
+func (ren *Render) String(t string, td any) (string, error) {
 	// Call buildTemplate to get the template, either from the cache or by building it
 	// from disk.
 	tmpl, err := ren.buildTemplate(t)
 	if err != nil {
 		return "", err
-	}
-
-	// if we don't have template data, just use an empty struct.
-	if td == nil {
-		td = &Data{}
 	}
 
 	// Execute the template, storing the result in a bytes.Buffer variable.

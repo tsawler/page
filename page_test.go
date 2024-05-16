@@ -64,7 +64,7 @@ func TestRender_Show(t *testing.T) {
 	}
 }
 
-func Test_GetTemplate(t *testing.T) {
+func TestRender_GetTemplate(t *testing.T) {
 	p := New()
 	p.TemplateDir = "./testdata/templates"
 	p.Debug = true

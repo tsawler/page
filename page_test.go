@@ -132,16 +132,14 @@ func TestRender_String(t *testing.T) {
 	}
 }
 
-func Foo() string {
-	return "bar"
-}
-
 func Test_withFuncMap(t *testing.T) {
 	p := New()
 	p.TemplateDir = "./testdata/templates"
 	p.Partials = []string{"base.layout.gohtml"}
 	fm := template.FuncMap{
-		"foo": Foo,
+		"foo": func() string {
+			return "bar"
+		},
 	}
 	p.Functions = fm
 

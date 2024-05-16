@@ -72,6 +72,18 @@ func (ren *Render) String(t string, td any) (string, error) {
 	return result, nil
 }
 
+// GetTemplate attempts to get a template from the cache, builds it if it does not find it, and returns it.
+func (ren *Render) GetTemplate(t string) (*template.Template, error) {
+	// Call buildTemplate to get the template, either from the cache or by building it
+	// from disk.
+	tmpl, err := ren.buildTemplate(t)
+	if err != nil {
+		return nil, err
+	}
+
+	return tmpl, nil
+}
+
 // buildTemplate is a utility function that creates a template, either from the cache, or from
 // disk. The template is ready to accept functions & data, and then get rendered.
 func (ren *Render) buildTemplate(t string) (*template.Template, error) {

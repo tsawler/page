@@ -74,6 +74,11 @@ func Test_GetTemplate(t *testing.T) {
 	if err != nil {
 		t.Error("error getting template:", err.Error())
 	}
+
+	_, err = p.GetTemplate("bad.page.gohtml")
+	if err == nil {
+		t.Error("expected error but did not get one")
+	}
 }
 
 var stringTests = []struct {

@@ -64,6 +64,18 @@ func TestRender_Show(t *testing.T) {
 	}
 }
 
+func Test_GetTemplate(t *testing.T) {
+	p := New()
+	p.TemplateDir = "./testdata/templates"
+	p.Debug = true
+	p.Partials = []string{"base.layout.gohtml"}
+
+	_, err := p.GetTemplate("home.page.gohtml")
+	if err != nil {
+		t.Error("error getting template:", err.Error())
+	}
+}
+
 var stringTests = []struct {
 	name          string
 	template      string

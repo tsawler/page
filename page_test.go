@@ -152,3 +152,41 @@ func Test_withFuncMap(t *testing.T) {
 		t.Error("did not find bar in rendered template:\n", s)
 	}
 }
+
+func Test_addTemplate(t *testing.T) {
+	files, err := addTemplate("./testdata/templates", ".layout")
+	if err != nil {
+		t.Error("error calling addTemplate:", err)
+	}
+
+	if len(files) != 1 {
+		t.Error("wrong number of files in slice")
+	}
+
+	files, err = addTemplate("./nonexistent/templates", ".layout")
+	if err == nil {
+		t.Error("expected error but did not get one")
+	}
+}
+
+func TestRender_LoadLayoutsAndPartials(t *testing.T) {
+	p := New()
+	p.TemplateDir = "./testdata/templates"
+	p.Debug = true
+
+	err := p.LoadLayoutsAndPartials([]string{".layout"})
+	if err != nil {
+		t.Error("unexpected error:", err)
+	}
+
+	if len(p.Partials) != 1 {
+		t.Error("wrong number of files in partials")
+	}
+
+	p.TemplateDir = "./nonexistent/templates"
+	err = p.LoadLayoutsAndPartials([]string{".layout"})
+	if err == nil {
+		t.Error("expected error but did not get one")
+	}
+
+}

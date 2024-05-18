@@ -70,10 +70,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/tsawler/page"
 	"html/template"
 	"log"
 	"net/http"
+
+	"github.com/tsawler/page"
 )
 
 const port = ":8080"
@@ -88,9 +89,14 @@ func main() {
 		TemplateDir: "./templates",
 		TemplateMap: make(map[string]*template.Template),
 		Functions:   template.FuncMap{},
-		Partials:    []string{"base.layout.gohtml"},
 		Debug:       true,
 		UseCache:    true,
+	}
+
+	// Call LoadLayoutsAndPartials to automatically load all such files in TemplateDir.
+	err := render.LoadLayoutsAndPartials([]string{".layout"})
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +113,7 @@ func main() {
 	http.HandleFunc("/string", func(w http.ResponseWriter, r *http.Request) {
 		data := make(map[string]any)
 		data["payload"] = "This is passed data."
-		out, err := render.String(w, "home.page.gohtml", &Data{Data: data})
+		out, err := render.String("home.page.gohtml", &Data{Data: data})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			log.Println(err)
@@ -118,7 +124,9 @@ func main() {
 	})
 
 	log.Println("Starting on port", port)
-	_ = http.ListenAndServe(port, nil)
+	err = http.ListenAndServe(port, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
-
 ```

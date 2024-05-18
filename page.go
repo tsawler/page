@@ -148,6 +148,13 @@ func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
 	return tmpl, nil
 }
 
+// LoadLayoutsAndPartials accepts a slice of strings which should consist of the types of files
+// that are either layouts or partials for templates. For example, if a layout file is named
+// `base.layout.gohtml` and a partial is named `footer.partial.gohtml`, then we would pass
+//
+//	[]string{".layout", ".partial"}
+//
+// Files anywhere in TemplateDir will be added the the Partials field of the Render type.
 func (ren *Render) LoadLayoutsAndPartials(fileTypes []string) error {
 	var templates []string
 	for _, t := range fileTypes {

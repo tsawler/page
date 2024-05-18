@@ -124,9 +124,7 @@ func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
 	var templateSlice []string
 
 	// Read in the partials, if any.
-	for _, x := range ren.Partials {
-		templateSlice = append(templateSlice, x)
-	}
+	templateSlice = append(templateSlice, ren.Partials...)
 
 	// Append the template we want to render to the slice. Use path.Join to make it os agnostic.
 	templateSlice = append(templateSlice, path.Join(ren.TemplateDir, t))

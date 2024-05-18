@@ -36,7 +36,7 @@ func TestRender_Show(t *testing.T) {
 	p := New()
 	p.TemplateDir = "./testdata/templates"
 	p.Debug = true
-	p.Partials = []string{"base.layout.gohtml"}
+	p.Partials = []string{"./testdata/templates/base.layout.gohtml"}
 
 	for _, e := range showTests {
 		rr := httptest.NewRecorder()
@@ -68,7 +68,7 @@ func TestRender_GetTemplate(t *testing.T) {
 	p := New()
 	p.TemplateDir = "./testdata/templates"
 	p.Debug = true
-	p.Partials = []string{"base.layout.gohtml"}
+	p.Partials = []string{"./testdata/templates/base.layout.gohtml"}
 
 	_, err := p.GetTemplate("home.page.gohtml")
 	if err != nil {
@@ -99,7 +99,7 @@ func TestRender_String(t *testing.T) {
 	p := New()
 	p.TemplateDir = "./testdata/templates"
 	p.Debug = true
-	p.Partials = []string{"base.layout.gohtml"}
+	p.Partials = []string{"./testdata/templates/base.layout.gohtml"}
 
 	for _, e := range stringTests {
 		data := make(map[string]any)
@@ -135,7 +135,7 @@ func TestRender_String(t *testing.T) {
 func Test_withFuncMap(t *testing.T) {
 	p := New()
 	p.TemplateDir = "./testdata/templates"
-	p.Partials = []string{"base.layout.gohtml"}
+	p.Partials = []string{"./testdata/templates/base.layout.gohtml"}
 	fm := template.FuncMap{
 		"foo": func() string {
 			return "bar"

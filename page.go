@@ -2,11 +2,13 @@ package page
 
 import (
 	"bytes"
-	"fmt"
 	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
+	"path"
 	"path/filepath"
+	"strings"
 	"sync"
 )
 
@@ -15,18 +17,17 @@ var mapLock sync.Mutex
 // Render is the main type for this package. Create a variable of this type
 // and specify its fields, and you have access to the Show and String functions.
 type Render struct {
-	TemplateDir string                        // The directory where go templates are stored.
+	TemplateDir string                        // The path to templates.
 	Functions   template.FuncMap              // A map of functions we want to pass to our templates.
 	UseCache    bool                          // If true, use the template cache, stored in TemplateMap.
 	TemplateMap map[string]*template.Template // Our template cache.
-	Partials    []string                      // A list of partials; these are assumed to be stored in TemplateDir.
+	Partials    []string                      // A list of partials.
 	Debug       bool                          // Prints debugging info when true.
 }
 
 // New returns a Render type populated with sensible defaults.
 func New() *Render {
 	return &Render{
-		TemplateDir: "./templates",
 		Functions:   template.FuncMap{},
 		UseCache:    true,
 		TemplateMap: make(map[string]*template.Template),
@@ -37,15 +38,16 @@ func New() *Render {
 
 // Show generates a page of html from our template file(s).
 func (ren *Render) Show(w http.ResponseWriter, t string, td any) error {
-	// Call buildTemplate to get the template, either from the cache or by building it
-	// from disk.
+	// Call buildTemplate to get the template, either from the cache or by building it from disk.
 	tmpl, err := ren.buildTemplate(t)
 	if err != nil {
+		log.Println("error building", err)
 		return err
 	}
 
-	// execute the template
+	// Execute the template.
 	if err := tmpl.ExecuteTemplate(w, t, td); err != nil {
+		log.Println("error executing", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return err
 	}
@@ -104,8 +106,10 @@ func (ren *Render) buildTemplate(t string) (*template.Template, error) {
 	// At this point, tmpl will be nil if we do not have a value in the map (our template
 	// cache). In this case, we build the template from disk.
 	if tmpl == nil {
+		log.Println("t", t)
 		newTemplate, err := ren.buildTemplateFromDisk(t)
 		if err != nil {
+			log.Println("Error building from disk")
 			return nil, err
 		}
 		tmpl = newTemplate
@@ -121,13 +125,11 @@ func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
 
 	// Read in the partials, if any.
 	for _, x := range ren.Partials {
-		// We use filepath.Join to make this OS-agnostic.
-		path := filepath.Join(ren.TemplateDir, x)
-		templateSlice = append(templateSlice, path)
+		templateSlice = append(templateSlice, x)
 	}
 
-	// Append the template we want to render to the slice.
-	templateSlice = append(templateSlice, fmt.Sprintf("%s/%s", ren.TemplateDir, t))
+	// Append the template we want to render to the slice. Use path.Join to make it os agnostic.
+	templateSlice = append(templateSlice, path.Join(ren.TemplateDir, t))
 
 	// Create a new template by parsing all the files in the slice.
 	tmpl, err := template.New(t).Funcs(ren.Functions).ParseFiles(templateSlice...)
@@ -146,4 +148,49 @@ func (ren *Render) buildTemplateFromDisk(t string) (*template.Template, error) {
 	}
 
 	return tmpl, nil
+}
+
+func (ren *Render) LoadLayoutsAndPartials(fileTypes []string) error {
+	var templates []string
+	for _, t := range fileTypes {
+		files, err := addTemplate(ren.TemplateDir, t)
+		if err != nil {
+			return err
+		}
+		templates = append(templates, files...)
+	}
+
+	ren.Partials = templates
+	return nil
+}
+
+func addTemplate(path, fileType string) ([]string, error) {
+	files, err := find(path, ".gohtml")
+	if err != nil {
+		return nil, err
+	}
+	var templates []string
+	for _, x := range files {
+		if strings.Contains(x, fileType) {
+			templates = append(templates, x)
+		}
+	}
+	return templates, nil
+}
+
+func find(root, ext string) ([]string, error) {
+	var files []string
+	err := filepath.WalkDir(root, func(s string, d fs.DirEntry, e error) error {
+		if e != nil {
+			return e
+		}
+		if filepath.Ext(d.Name()) == ext {
+			files = append(files, s)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return files, nil
 }

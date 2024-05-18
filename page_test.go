@@ -163,7 +163,7 @@ func Test_addTemplate(t *testing.T) {
 		t.Error("wrong number of files in slice")
 	}
 
-	files, err = addTemplate("./nonexistent/templates", ".layout")
+	_, err = addTemplate("./nonexistent/templates", ".layout")
 	if err == nil {
 		t.Error("expected error but did not get one")
 	}
